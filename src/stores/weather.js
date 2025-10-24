@@ -11,18 +11,19 @@ export const useWeatherInfo = defineStore('weather', {
       searchId: ref(''), //都道府県のID
     },
     areaInfo: ref([]),
+    serchResult: ref([]),
+    serchResultWeek: ref([]),
+    todayDate: ref([]),
+    weekDate: ref([]),
+    weatherIcon: ref([]),
   }),
 
-  getters: {
-    //画面表示用にデータを加工する
-    serchResult: (state) => {
-      return state.weatherInfo.weatherDetails[0].timeSeries[0].areas
-    },
-
-    serchResultWeek: (state) => {
-      return state.weatherInfo.weatherDetails[1].timeSeries[0].areas
-    },
-  },
+  // getters: {
+  //   //画面表示用にデータを加工する
+  //   serchResult: (state) => {
+  //     return state.weatherInfo.weatherDetails[0].timeSeries[0].areas
+  //   },
+  // },
 
   actions: {
     // APIから情報を取得する処理
@@ -55,9 +56,47 @@ export const useWeatherInfo = defineStore('weather', {
         )
         const res3 = await axios.get(url3.value)
         this.weatherInfo.weatherDetails = res3.data
+        this.serchResult = this.weatherInfo.weatherDetails[0].timeSeries[0].areas
+        this.serchResultWeek = this.weatherInfo.weatherDetails[1].timeSeries[0].areas
+
+        for (let a = 0; a < this.weatherInfo.weatherDetails.length; a++) {
+          console.log(this.weatherInfo.weatherDetails.length)
+          let date = this.weatherInfo.weatherDetails[a].timeSeries[0].timeDefines
+          for (let i = 0; i < date.length; i++) {
+            console.log(date[i])
+            date[i] = date[i].substr(5, 5)
+            console.log(date[i])
+            date[i] = date[i].replace('-', '/')
+            console.log(date[i])
+          }
+          if (a === 0) {
+            this.todayDate = date
+          } else {
+            this.weekDate = date
+          }
+        }
       } catch (err) {
         console.error('天気取得失敗:', err)
       }
+    },
+
+    getTimeDefines(weatherInfo) {
+      for (let a = 0; a < weatherInfo.weatherDetails[a]; a++) {
+        const date = weatherInfo.weatherDetails[0].timeSeries[a].timeDefines
+        for (let i = 0; i < date.length; i++) {
+          console.log(date[i])
+          date[i] = date[i].substr(0, 5)
+          console.log(date[i])
+          date[i] = date[i].replace('-', '/')
+          console.log(date[i])
+        }
+        if (a === 0) {
+          this.todayDate = date
+        } else {
+          this.weekDate = date
+        }
+      }
+      return date
     },
 
     clearSerchInfo() {
@@ -65,6 +104,8 @@ export const useWeatherInfo = defineStore('weather', {
       this.weatherInfo.searchInfo = ''
       this.weatherInfo.weatherDetails = ''
       this.weatherInfo.searchId = ''
+      this.serchResult = ''
+      this.serchResultWeek = ''
     },
   },
 })

@@ -7,6 +7,8 @@ const store = useWeatherInfo()
 const weatherInfo = computed(() => store.weatherInfo)
 const serchResult = computed(() => store.serchResult)
 const serchResultWeek = computed(() => store.serchResultWeek)
+const todayDate = computed(() => store.todayDate)
+const weekDate = computed(() => store.weekDate)
 
 const searchArea = () => {
   store.searchArea()
@@ -15,6 +17,7 @@ const searchArea = () => {
 const clearSerchInfo = () => {
   store.clearSerchInfo()
 }
+
 </script>
 
 <template>
@@ -40,30 +43,22 @@ const clearSerchInfo = () => {
             </v-btn>
           </v-row>
 
-          <v-row class="mb-3 mt-3" align="center" justify="center">
-          </v-row>
 
-          <v-row class="mb-3 mt-3" justify="left">
-            {{ weatherInfo.searchInfo.targetArea }}
+
+          <v-row class="mb-3 mt-3" justify="center">
+            <h1>{{ weatherInfo.searchInfo.targetArea }}</h1>
           </v-row>
 
           <v-row class="mb-3 mt-3" justify="left" v-for="(weatherDetailsArea, i) in serchResult">
             <ul>
               <li>
-                <p>{{ weatherDetailsArea.area.name }}<br></p>
-                <p>{{ weatherDetailsArea.weathers[0] }}<br></p>
-              </li>
-            </ul>
-          </v-row>
-          <v-row class="mb-3 mt-3" justify="left">
+                <h2>{{ weatherDetailsArea.area.name }}<br></h2>
+                <v-row class="mb-3 mt-3" justify="left" v-for="(todayDate, j) in todayDate">
+                  {{ todayDate }}
+                  <p>{{ weatherDetailsArea.weathers[j] }}</p>
 
-          </v-row>
-
-          <v-row class="mb-3 mt-3" justify="left" v-for="(weatherDetailsArea, i) in serchResultWeek">
-            <ul>
-              <li>
-                <p>{{ weatherDetailsArea.area.name }}<br></p>
-                <p>{{ weatherDetailsArea.weatherCodes[0] }}<br></p>
+                  <br>
+                </v-row>
               </li>
             </ul>
           </v-row>
